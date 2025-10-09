@@ -14,8 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recipeName: Piza
   dishIcon: {fileID: 21300030, guid: 37607ec1aab56e349af84a980f685a4b, type: 3}
-  requiredIds:
-  - 1
-  - 2
-  - 3
-  - 4
+  ingredients:
+  - id: 1
+    name: Avocado
+    icon: {fileID: 21300042, guid: 37607ec1aab56e349af84a980f685a4b, type: 3}
+  - id: 2
+    name: Banana
+    icon: {fileID: 21300020, guid: 37607ec1aab56e349af84a980f685a4b, type: 3}
+  - id: 3
+    name: Baguette
+    icon: {fileID: 21300056, guid: 37607ec1aab56e349af84a980f685a4b, type: 3}
+  - id: 4
+    name: Burger
+    icon: {fileID: 21300028, guid: 37607ec1aab56e349af84a980f685a4b, type: 3}

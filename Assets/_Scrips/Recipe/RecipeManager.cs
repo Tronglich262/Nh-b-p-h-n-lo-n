@@ -16,9 +16,13 @@ public class RecipeManager : MonoBehaviour
     public List<RecipeData> allRecipes;
     public int queueSize = 5;
 
+    [Header("Database nguyên liệu")]
+    public IngredientDatabase database;   
+
+
     private Queue<RecipeData> recipeQueue = new Queue<RecipeData>();
     private RecipeData currentRecipe;
-
+    public static RecipeManager Instance { get; private set; }
     private void Start()
     {
         if (slots == null || slots.Length == 0)
@@ -42,7 +46,7 @@ public class RecipeManager : MonoBehaviour
             return;
         }
 
-        var need = new HashSet<string>(currentRecipe.requiredIds);
+        var need = new HashSet<string>(currentRecipe.ingredients.Select(e => e.id));
         var have = new HashSet<string>(
             slots.Select(s => s.GetCurrentIngredientId())
                  .Where(id => !string.IsNullOrEmpty(id))
@@ -74,7 +78,14 @@ public class RecipeManager : MonoBehaviour
 
             // update UI món hiện tại
             if (currentRecipeImage != null)
+            {
                 currentRecipeImage.sprite = currentRecipe.dishIcon;
+
+                // 🔥 gán RecipeData cho tooltip
+                var tooltip = currentRecipeImage.GetComponent<RecipeTooltipUI>();
+                if (tooltip != null)
+                    tooltip.Setup(currentRecipe);
+            }
 
             // update UI hàng chờ
             RefreshQueueUI();
@@ -85,11 +96,16 @@ public class RecipeManager : MonoBehaviour
         {
             currentRecipe = null;
             currentRecipeImage.sprite = null;
-            RefreshQueueUI();
 
-            Debug.Log(" Chiến thắng! Hoàn thành tất cả món.");
+            var tooltip = currentRecipeImage.GetComponent<RecipeTooltipUI>();
+            if (tooltip != null)
+                tooltip.Setup(null); // clear tooltip
+
+            RefreshQueueUI();
+            Debug.Log("🏆 Chiến thắng! Hoàn thành tất cả món.");
         }
     }
+
 
     private void RefreshQueueUI()
     {
@@ -97,16 +113,27 @@ public class RecipeManager : MonoBehaviour
 
         for (int i = 0; i < recipeQueueImages.Length; i++)
         {
+            var tooltip = recipeQueueImages[i].GetComponent<RecipeTooltipUI>();
+
             if (i < recipes.Count)
             {
                 recipeQueueImages[i].sprite = recipes[i].dishIcon;
                 recipeQueueImages[i].enabled = true;
+
+                if (tooltip != null)
+                    tooltip.Setup(recipes[i]); //  Gán recipe cho tooltip
             }
             else
             {
                 recipeQueueImages[i].sprite = null;
                 recipeQueueImages[i].enabled = false;
+
+                if (tooltip != null)
+                    tooltip.Setup(null); // clear nếu trống
             }
         }
     }
+
+
+
 }
